@@ -261,18 +261,21 @@
         .timer-display { font-size: 1.5rem; font-weight: 900; color: #ededf0; font-variant-numeric: tabular-nums; display: flex; align-items: center; justify-content: center; width: 100%; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         .timer-display.urgente { color: var(--accent-red); animation: piscarTimer 1s infinite; }
         @keyframes piscarTimer { 50% { opacity: 0.3; } }
-        /* Dados 3D */
-        #dice-panel { position: absolute; top: 120px; left: 340px; width: 240px; max-height: 380px; flex-direction: column; z-index: 250; display: none; }
-        .dice-log { margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 10px; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; color: #a1a1aa; font-family: monospace; }
-        .dice-log-item { background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; border-left: 2px solid var(--accent-gold); }
-        .dice-btn { background: rgba(0,0,0,0.4); color: var(--accent-gold); border: 1px solid var(--border-color); width: 50px; height: 50px; border-radius: 12px; font-weight: 800; font-size: 1.2rem; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; box-shadow: inset 0 2px 4px rgba(255,255,255,0.05);}
-        .dice-btn:hover { background: var(--accent-gold); color: #000; transform: translateY(-3px) scale(1.05); box-shadow: 0 6px 15px rgba(245, 192, 79, 0.4); border-color: var(--accent-gold);}
-        #dice-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; justify-content: center; align-items: center; z-index: 999; }
+        /* --- HISTÓRICO DE ROLAGENS (NOVO) --- */
+        #history-panel { position: absolute; bottom: 90px; left: 85px; width: 320px; max-height: 400px; display: none; flex-direction: column; z-index: 1050; background: var(--bg-panel); backdrop-filter: blur(16px); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); padding: 20px; }
+        .history-log { margin-top: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; font-family: 'Inter', sans-serif; flex: 1; padding-right: 5px; }
+        .history-item { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; border-left: 3px solid var(--border-color); color: #ededf0; }
+        .history-item.mestre { border-left-color: var(--accent-red); }
+        .history-item.jogador { border-left-color: var(--accent-blue); }
+        .history-item.voce { border-left-color: var(--accent-gold); }
+        .history-remetente { font-weight: 800; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
+        
+        /* --- ANIMAÇÃO DO DADO --- */
+        #dice-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; display: flex; justify-content: center; align-items: center; z-index: 99999; }
         .dice-animado { position: relative; width: 120px; height: 120px; background: var(--accent-gold); color: #000; display: flex; justify-content: center; align-items: center; font-size: 3.5rem; font-weight: 900; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 4px 10px rgba(255,255,255,0.4); border: 4px solid #fff; opacity: 0; transform-style: preserve-3d; }
         .dice-label { position: absolute; top: -35px; font-size: 0.9rem; color: #fff; background: rgba(0,0,0,0.85); padding: 4px 16px; border-radius: 8px; font-weight: 800; white-space: nowrap; border: 1px solid rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); pointer-events: none;}
         @keyframes rolarDado3D { 0% { transform: scale(0.2) rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(-400px); opacity: 1; } 50% { transform: scale(1.4) rotateX(360deg) rotateY(720deg) rotateZ(180deg) translateY(0); opacity: 1; } 100% { transform: scale(1) rotateX(720deg) rotateY(1080deg) rotateZ(360deg) translateY(0); opacity: 1; } }
         @keyframes impactoResultado { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
-        
         .oculto { display: none !important; }
 	/* Estilo da Nova Galeria de Mapas */
         #map-panel { position: absolute; top: 80px; left: 340px; width: 360px; max-height: 500px; display: flex; flex-direction: column; z-index: 250; transition: opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -282,33 +285,23 @@
         #handout-panel.escondido { opacity: 0; pointer-events: none; transform: translateY(-20px) scale(0.95); }
         .handout-preview { width: 100%; height: 75px; border-radius: 8px; background-size: cover; background-position: center; border: 1px solid var(--border-color); box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
 	/* --- DIÁRIO DOS JOGADORES --- */
-        #btn-journal-jogador {
-            position: absolute; top: 20px; right: 20px; width: 56px; height: 56px;
-            background: var(--bg-panel); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color); border-radius: 50%;
-            display: none; justify-content: center; align-items: center; font-size: 1.5rem;
-            cursor: pointer; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.6); transition: 0.2s;
-        }
-        body.is-jogador #btn-journal-jogador { display: flex; }
-        #btn-journal-jogador:hover { transform: scale(1.1); border-color: var(--accent-gold); }
-
-        #player-handout-panel { 
+       #player-handout-panel { 
             position: absolute; top: 90px; right: 20px; width: 360px; max-height: 500px; display: flex; 
-            flex-direction: column; z-index: 1050; transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
+            flex-direction: column; z-index: 1050; 
+            transition: opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
             background: var(--bg-panel); backdrop-filter: blur(16px); border: 1px solid var(--border-color); 
             border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); padding: 20px; 
         }
         #player-handout-panel.escondido { opacity: 0; pointer-events: none; transform: translateY(-20px) scale(0.95); }
         .map-preview { width: 100%; height: 75px; border-radius: 8px; background-size: cover; background-position: center; border: 1px solid var(--border-color); box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
 	/* --- BOTÃO E PAINEL DE ROLAGEM CUSTOMIZADA --- */
-        #btn-floating-dice {
-            position: absolute; bottom: 20px; left: 20px; width: 56px; height: 56px;
-            background: var(--bg-panel); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; font-size: 1.8rem;
-            cursor: pointer; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.6); transition: 0.2s;
+        /* --- DOCK MÓVEL DE BOTÕES FLUTUANTES --- */
+        .dock-btn {
+            width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; 
+            align-items: center; font-size: 1.5rem; cursor: pointer; transition: 0.2s; 
+            border: 1px solid transparent; color: #fff; background: rgba(0,0,0,0.3);
         }
-        #btn-floating-dice:hover { transform: scale(1.1); border-color: var(--accent-gold); }
+        .dock-btn:hover { transform: scale(1.1); border-color: var(--accent-gold); background: rgba(245,192,79,0.2); }
 
         #custom-dice-panel {
             position: absolute; bottom: 90px; left: 20px; width: 320px;
@@ -599,20 +592,12 @@
             <button class="tool-btn" style="padding: 8px 12px;" onclick="pararTimerMestre()">⏹</button>
         </div>
     </div>
-    <div id="dice-panel" style="display: none;">
-        <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 style="color:var(--accent-gold); font-size:1rem;">🎲 Rolagem</h3>
-            <button onclick="toggleDicePanel()" style="background:none; border:none; color:var(--accent-red); cursor:pointer; font-size: 1.2rem; font-weight:bold; line-height: 1;">✕</button>
+    <div id="history-panel">
+        <div id="history-drag-zone" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; cursor: move; user-select: none;">
+            <h3 style="color:var(--accent-gold); font-size:1rem;">📜 Histórico</h3>
+            <button onclick="toggleHistoryPanel()" style="background:none; border:none; color:var(--accent-red); cursor:pointer; font-size: 1.2rem; font-weight:bold;">✕</button>
         </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-            <button class="dice-btn" onclick="rolarDado(4)">d4</button>
-            <button class="dice-btn" onclick="rolarDado(6)">d6</button>
-            <button class="dice-btn" onclick="rolarDado(8)">d8</button>
-            <button class="dice-btn" onclick="rolarDado(10)">d10</button>
-            <button class="dice-btn" onclick="rolarDado(12)">d12</button>
-            <button class="dice-btn" onclick="rolarDado(20)">d20</button>
-        </div>
-        <div class="dice-log" id="dice-log"></div>
+        <div class="history-log" id="history-log"></div>
     </div>
 	<div id="handout-overlay">
         <div class="handout-container">
@@ -621,7 +606,6 @@
             <img id="handout-imagem" class="handout-img" src="" alt="Handout">
         </div>
     </div>
-    <div class="drop-zone-overlay" id="drop-zone"><span>📥 SOLTE A IMAGEM PARA CRIAR TOKEN</span></div>
     
     <div id="token-maker-panel">
         <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
@@ -641,10 +625,14 @@
         </div>
         <button class="btn-primary" style="width: 100%;" onclick="salvarTokenGerado()">✨ GERAR E ADICIONAR AO MAPA</button>
     </div>
-	<div id="btn-floating-dice" onclick="toggleCustomDicePanel()" title="Abrir Rolagens de Combate">🎲</div>
-	<div id="btn-journal-jogador" onclick="togglePlayerHandoutPanel()" title="Abrir Diário de Pistas">📖</div>
+	<div id="floating-dock" style="position: absolute; bottom: 20px; left: 20px; display: flex; align-items: center; gap: 5px; z-index: 1000; background: var(--bg-panel); padding: 5px 10px; border-radius: 50px; border: 1px solid var(--border-color); backdrop-filter: blur(16px); box-shadow: 0 4px 15px rgba(0,0,0,0.6);">
+        <div id="dock-drag-handle" style="cursor: move; padding: 0 5px; color: #a1a1aa; font-size: 1.2rem; display: flex; align-items: center;" title="Arraste para mover">⋮⋮</div>
+        <div class="dock-btn" onclick="toggleCustomDicePanel()" title="Abrir Construtor de Ataque">🎲</div>
+        <div class="dock-btn" onclick="toggleHistoryPanel()" title="Histórico de Rolagens">📜</div>
+        <div class="dock-btn" id="btn-journal-jogador" onclick="togglePlayerHandoutPanel()" title="Abrir Diário de Pistas">📖</div>
+    </div>
     <div id="player-handout-panel" class="escondido">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div id="journal-drag-zone" style="display: flex; justify-content: space-between; align-items: center; cursor: move; user-select: none; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-bottom: 10px;">
             <h3 style="color: var(--accent-gold); font-size: 1rem;">📖 Diário do Grupo</h3>
             <button onclick="togglePlayerHandoutPanel()" style="background: transparent; border: none; color: #a8a8b3; cursor: pointer; font-size: 1.2rem; line-height: 1;">✕</button>
         </div>
@@ -652,7 +640,7 @@
     </div>
 
     <div id="custom-dice-panel">
-        <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">
+        <div id="dice-drag-zone" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; cursor: move; user-select: none;">
             <h3 style="color:var(--accent-gold); font-size:1rem;">⚔️ Construtor de Ataque</h3>
             <div style="display: flex; gap: 10px; align-items: center;">
                 <input type="color" id="cor-dado-visual" value="#f5c04f" title="Cor do Dado Visual" style="width: 28px; height: 28px; padding: 0; border: 1px solid var(--border-color); border-radius: 50%; cursor: pointer; background: transparent;">
@@ -697,11 +685,15 @@
             <button class="btn-primary" style="margin-top: 15px; padding: 15px;" onclick="rolarAtaqueEDano()">⚔️ ROLAR AÇÃO</button>
         </div>
     </div>
-    <div id="dice-overlay">
-        <div id="dice-center" class="dice-animado"></div>
-    </div>
 
     <div id="viewport">
+        <div id="dice-overlay">
+            <div id="dice-center" class="dice-animado"></div>
+        </div>
+
+        <div id="world">
+            <div id="selection-box"></div>
+            <div id="laser-pointer" class="laser-pointer"></div>
         <div id="world">
 	<div id="selection-box"></div>
             <div id="laser-pointer" class="laser-pointer"></div>
@@ -1093,7 +1085,7 @@
                 if (!isRulerActive) togglePainelMedicao();
                 selecionarFerramenta('laser');
             }
-            if (tecla === 'd') toggleDicePanel();
+            if (tecla === 'h') toggleHistoryPanel();
             if (tecla === 'g') {
                 pingAtivo = !pingAtivo;
                 viewport.style.cursor = pingAtivo ? 'crosshair' : '';
@@ -2714,64 +2706,121 @@
             else visor.classList.remove('urgente');
         }
         // ==========================================
-        // 🎲 SISTEMA DE ROLAGEM DE DADOS 2D
+        // 📜 SISTEMA DE HISTÓRICO DE ROLAGENS
         // ==========================================
-        function toggleDicePanel() {
-            const painel = document.getElementById('dice-panel');
-            painel.style.display = (painel.style.display === 'flex') ? 'none' : 'flex';
+        let tempoEsconderDado; // <-- A variável que ressuscitou a animação!
+
+        // Sistema para arrastar a Dock de Botões
+        (function() {
+            const dock = document.getElementById('floating-dock');
+            const handle = document.getElementById('dock-drag-handle');
+            if (!handle || !dock) return;
+
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            handle.onmousedown = (e) => {
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
+                document.onmousemove = (e) => {
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX; pos4 = e.clientY;
+                    dock.style.top = (dock.offsetTop - pos2) + "px";
+                    dock.style.left = (dock.offsetLeft - pos1) + "px";
+                    dock.style.bottom = "auto"; dock.style.right = "auto";
+                };
+            };
+        })();
+        // --- MOTOR DE ARRASTO UNIVERSAL ---
+        function tornarArrastavel(idPainel, idGatilho) {
+            const painel = document.getElementById(idPainel);
+            const gatilho = document.getElementById(idGatilho);
+            if (!gatilho || !painel) return;
+
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            gatilho.onmousedown = (e) => {
+                e.preventDefault();
+                pos3 = e.clientX; pos4 = e.clientY;
+                document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
+                document.onmousemove = (e) => {
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX; pos4 = e.clientY;
+                    painel.style.top = (painel.offsetTop - pos2) + "px";
+                    painel.style.left = (painel.offsetLeft - pos1) + "px";
+                    painel.style.bottom = "auto"; painel.style.right = "auto"; // Solta a janela
+                };
+            };
         }
 
-        let tempoEsconderDado;
+        // Ativa o arrasto assim que o VTT carregar
+        window.addEventListener('DOMContentLoaded', () => {
+            tornarArrastavel('history-panel', 'history-drag-zone');
+            tornarArrastavel('custom-dice-panel', 'dice-drag-zone');
+            tornarArrastavel('player-handout-panel', 'journal-drag-zone');
+        });
 
-        function adicionarAoLogLocal(texto) {
-            const logBox = document.getElementById('dice-log');
+        // --- CÁLCULO INTELIGENTE DE POSIÇÃO ---
+        function abrirEmCimaDoBotao(painel, elementoBaseId) {
+            const base = document.getElementById(elementoBaseId);
+            if (!base) return;
+            
+            // Acorda o painel para o navegador conseguir medir o tamanho dele
+            painel.style.display = 'flex'; 
+            painel.classList.remove('escondido');
+            
+            const rectBase = base.getBoundingClientRect();
+            
+            // Calcula a posição para abrir colado ao botão
+            let novaEsquerda = rectBase.left;
+            
+            // Trava de segurança: impede que a janela abra para fora da tela
+            if (novaEsquerda + painel.offsetWidth > window.innerWidth) {
+                novaEsquerda = window.innerWidth - painel.offsetWidth - 20;
+            }
+            if (novaEsquerda < 10) novaEsquerda = 10;
+
+            painel.style.left = novaEsquerda + 'px';
+            painel.style.top = (rectBase.top - painel.offsetHeight - 15) + 'px';
+            painel.style.bottom = 'auto'; 
+            painel.style.right = 'auto';
+        }
+
+        // Nova versão do Toggle de Histórico (Corrigida para todos os jogadores)
+        function toggleHistoryPanel() {
+            const painel = document.getElementById('history-panel');
+            if (painel.style.display === 'flex') {
+                painel.style.display = 'none';
+            } else {
+                // Agora toda a gente (Mestre e Jogadores) rastreia a mesma Dock!
+                abrirEmCimaDoBotao(painel, 'floating-dock');
+            }
+        }
+
+        function adicionarAoHistorico(texto, remetente) {
+            const logBox = document.getElementById('history-log');
             if (!logBox) return;
+            
             const item = document.createElement('div');
-            item.className = 'dice-log-item';
-            item.textContent = texto;
+            let classeCores = 'history-item ';
+            if (remetente === 'Mestre (Oculto)') classeCores += 'mestre';
+            else if (remetente === 'Você') classeCores += 'voce';
+            else classeCores += 'jogador';
+
+            item.className = classeCores;
+            item.innerHTML = `<div class="history-remetente">${remetente}</div><div>${texto.replace(/\n/g, '<br>')}</div>`;
+            
             logBox.appendChild(item);
             logBox.scrollTop = logBox.scrollHeight;
         }
-
-        function rolarDado(lados) {
-            const dado = document.getElementById('dice-center');
-            clearTimeout(tempoEsconderDado); 	
-            dado.style.animation = 'none';
-            void dado.offsetWidth; 	
-            
-            dado.innerHTML = "🎲"; 
-            dado.style.color = "var(--bg-dark)";
-            dado.style.background = "var(--accent-gold)";
-            dado.style.opacity = '1';
-            dado.style.animation = 'rolarDado3D 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards';
-
-            setTimeout(() => {
-                let resultado = Math.floor(Math.random() * lados) + 1;
-                dado.innerHTML = resultado;
-                
-                let msg = `Mestre rolou d${lados}: Resultado [ ${resultado} ]`;
-                if (lados === 20 && resultado === 20) {
-                    dado.style.background = 'var(--accent-red)';
-                    dado.style.color = '#fff';
-                    msg += " 🔥 CRÍTICO!";
-                } else if (lados === 20 && resultado === 1) {
-                    dado.style.background = 'var(--accent-blue)';
-                    dado.style.color = '#fff';
-                    msg += " 💀 FALHA CRÍTICA!";
-                }
-                
-                adicionarAoLogLocal(msg);
-                if (!isJogador && typeof canalSync !== 'undefined') {
-                    canalSync.postMessage({ tipo: 'dice-log-sync', texto: msg });
-                }
-
-                dado.style.animation = 'impactoResultado 0.3s ease-out forwards';
-                tempoEsconderDado = setTimeout(() => { dado.style.opacity = '0'; }, 3000);
-            }, 800);
-        }
 	function toggleCustomDicePanel() {
             const painel = document.getElementById('custom-dice-panel');
-            painel.style.display = (painel.style.display === 'flex') ? 'none' : 'flex';
+            if (painel.style.display === 'flex') {
+                painel.style.display = 'none';
+            } else {
+                abrirEmCimaDoBotao(painel, 'floating-dock');
+            }
         }
 
         // Função inteligente que lê textos matemáticos (ex: "2d6+3" ou "1d20-1")
@@ -2801,7 +2850,7 @@
             let strMod = mod !== 0 ? (mod > 0 ? `+${mod}` : `${mod}`) : "";
             let detalhe = qtd > 1 ? `[${resultados.join(', ')}]${strMod}` : `[${resultados[0]}]${strMod}`;
             
-            let quemRolou = (typeof isJogador !== 'undefined' && isJogador) ? "Jogador" : "Mestre";
+            let quemRolou = (typeof isJogador !== 'undefined' && isJogador) ? (window.nomeJogador || "Jogador") : "Mestre";
             let msg = `${quemRolou} rolou ${titulo} (${expressao}):\nTotal = ${total} 🎲 ${detalhe}`;
             
             // Verifica Críticos (Apenas para 1d20)
@@ -2810,13 +2859,12 @@
                 if (resultados[0] === 1) msg += " 💀 FALHA CRÍTICA!";
             }
 
-            // Exibe log
-            document.getElementById('dice-panel').style.display = 'flex';
-            adicionarAoLogLocal(msg);
+            // Exibe log apenas para quem rolou (O Mestre vê tudo no seu painel)
+            adicionarAoHistorico(msg, isJogador ? "Você" : "Mestre (Oculto)");
             
-            // Sincroniza com os outros (P2P)
-            if (typeof canalSync !== 'undefined') {
-                canalSync.postMessage({ tipo: 'dice-log-sync', texto: msg });
+            // Sincroniza APENAS se for jogador enviando as rolagens dele para o Mestre
+            if (isJogador && typeof canalSync !== 'undefined') {
+                canalSync.postMessage({ tipo: 'dice-log-sync', texto: msg, remetente: quemRolou });
             }
 
             // Dispara a animação visual 2D com o resultado total
@@ -2882,7 +2930,7 @@ function rolarAtaqueEDano() {
             let totalAtk = baseAtk + modAtk;
             let strModAtk = modAtk !== 0 ? (modAtk > 0 ? `+${modAtk}` : `${modAtk}`) : "";
             
-            let quemRolou = (typeof isJogador !== 'undefined' && isJogador) ? "Jogador" : "Mestre";
+            let quemRolou = (typeof isJogador !== 'undefined' && isJogador) ? (window.nomeJogador || "Jogador") : "Mestre";
             let msgTotal = `${quemRolou} rolou 🗡️ Ataque:\nAcerto: ${totalAtk} 🎲 ${detalheAtk}${strModAtk}`;
             
             if (baseAtk === 20) msgTotal += " 🔥 CRÍTICO!";
@@ -2910,15 +2958,41 @@ function rolarAtaqueEDano() {
                 msgTotal += `\n🩸 Dano: ${totalDano} 🎲 ${formulaStr}${strModDano}`;
             }
 
-            // Exibe Log e Sincroniza
-            document.getElementById('dice-panel').style.display = 'flex';
-            adicionarAoLogLocal(msgTotal);
-            if (typeof canalSync !== 'undefined') canalSync.postMessage({ tipo: 'dice-log-sync', texto: msgTotal });
+            // Exibe Log apenas para quem rolou
+            adicionarAoHistorico(msgTotal, isJogador ? "Você" : "Mestre (Oculto)");
+            
+            if (isJogador && typeof canalSync !== 'undefined') {
+                canalSync.postMessage({ tipo: 'dice-log-sync', texto: msgTotal, remetente: quemRolou });
+            }
 
             // Dispara a Animação Mestra Simultânea
             animarAcaoSimultanea(totalAtk, baseAtk, totalDano, corVisual);
         }
+        function animarDadoSimbolico(resultado, lados) {
+            const dado = document.getElementById('dice-center');
+            clearTimeout(tempoEsconderDado);
+            dado.style.animation = 'none';
+            void dado.offsetWidth;
 
+            dado.innerHTML = `<div class="dice-label">d${lados}</div>${resultado}`;
+            dado.style.color = "var(--bg-dark)";
+            dado.style.background = "var(--accent-gold)";
+            dado.style.width = '120px'; dado.style.height = '120px';
+            dado.style.opacity = '1';
+
+            if (lados === 20 && resultado === 20) {
+                dado.style.background = 'var(--accent-red)'; dado.style.color = '#fff';
+            } else if (lados === 20 && resultado === 1) {
+                dado.style.background = 'var(--accent-blue)'; dado.style.color = '#fff';
+            }
+
+            dado.style.animation = 'rolarDado3D 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards';
+
+            setTimeout(() => {
+                dado.style.animation = 'impactoResultado 0.2s ease-out forwards';
+                tempoEsconderDado = setTimeout(() => { dado.style.opacity = '0'; }, 1800);
+            }, 600);
+        }
         // Nova animação otimizada: mostra tudo de uma vez de forma explosiva
         function animarAcaoSimultanea(atk, baseAtk, dano, corHex) {
             const dado = document.getElementById('dice-center');
@@ -3064,8 +3138,12 @@ function rolarAtaqueEDano() {
         // Funções da Interface do Jogador
         function togglePlayerHandoutPanel() {
             const painel = document.getElementById('player-handout-panel');
-            painel.classList.toggle('escondido');
-            if (!painel.classList.contains('escondido')) renderizarGaleriaJogador();
+            if (painel.classList.contains('escondido')) {
+                abrirEmCimaDoBotao(painel, 'floating-dock');
+                renderizarGaleriaJogador();
+            } else {
+                painel.classList.add('escondido');
+            }
         }
 
         function renderizarGaleriaJogador() {
@@ -3240,10 +3318,7 @@ function rolarAtaqueEDano() {
                     clearTimeout(laser.timeout);
                     laser.timeout = setTimeout(() => { laser.style.display = 'none'; }, 200);
                 }
-                if (d.tipo === 'dice-log-sync') {
-                    document.getElementById('dice-panel').style.display = 'flex';
-                    adicionarAoLogLocal(d.texto);
-                }
+    
                 if (d.tipo === 'fow-history') reproduzirFow(d.historico);
 		if (d.tipo === 'mostrar-handout') mostrarHandoutLocal(d.url, d.titulo);
                 if (d.tipo === 'fechar-handout') fecharHandoutLocal();
@@ -3280,6 +3355,9 @@ function rolarAtaqueEDano() {
                         conn.send({ tipo: 'fow-history', historico: fowHistorico });
                         conn.send({ tipo: 'desenho-history', historico: desenhoHistorico });
                         conn.send({ tipo: 'medicao', html: document.getElementById('ruler-svg').innerHTML, display: document.getElementById('ruler-svg').style.display });
+                    }
+                    if (dados.tipo === 'dice-log-sync') {
+                        adicionarAoHistorico(dados.texto, dados.remetente || "Jogador");
                     }
                 });
 
@@ -3514,6 +3592,8 @@ function rolarAtaqueEDano() {
             if (!isJogador) { setInterval(salvarSessao, 10000); }
 
             if (isJogador) {
+                window.nomeJogador = prompt("Nome do seu personagem") || "Jogador Anônimo";
+                document.getElementById('toolbar').style.display = 'none';
                 document.getElementById('toolbar').style.display = 'none';
                 document.getElementById('medicao-panel').style.display = 'none';
                 document.getElementById('fow-canvas').style.opacity = '1.0'; 
