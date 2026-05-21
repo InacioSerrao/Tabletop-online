@@ -294,6 +294,9 @@
         }
         #player-handout-panel.escondido { opacity: 0; pointer-events: none; transform: translateY(-20px) scale(0.95); }
         .map-preview { width: 100%; height: 75px; border-radius: 8px; background-size: cover; background-position: center; border: 1px solid var(--border-color); box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
+        /* Botão de Excluir Pista Individual */
+        .btn-delete-pista { position: absolute; top: -5px; right: -5px; background: var(--accent-red); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 24px; height: 24px; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.8); }
+        .btn-delete-pista:hover { transform: scale(1.15) rotate(10deg); filter: brightness(1.2); }
 	/* --- BOTÃO E PAINEL DE ROLAGEM CUSTOMIZADA --- */
         /* --- DOCK MÓVEL DE BOTÕES FLUTUANTES --- */
         .dock-btn {
@@ -486,6 +489,7 @@
                 <button class="btn-toggle" onclick="gerarLinkConvite()" id="btn-convite" style="width: 100%; border-color: var(--accent-gold); color: var(--accent-gold);">🌐 Gerar Link de Convite Online</button>
 		<div style="height: 1px; background: var(--border-color); margin: 10px 0;"></div>
                 <span style="font-size: 0.75rem; color: var(--accent-gold); font-weight:800; display:block; margin-bottom:5px;">💾 BACKUP DA CAMPANHA</span>
+                <input type="text" id="nome-campanha-input" value="Minha_Aventura" placeholder="Nome do arquivo..." style="margin-bottom: 5px; padding: 6px; color: var(--accent-gold); font-weight: bold; text-align: center;">
                 <div style="display: flex; gap: 5px; width: 100%;">
                     <button class="btn-toggle" style="flex: 1; font-size: 0.75rem; padding: 8px 0; border-color: var(--accent-blue); color: var(--accent-blue);" onclick="exportarCampanha()">📥 Salvar .JSON</button>
                     <button class="btn-toggle" style="flex: 1; font-size: 0.75rem; padding: 8px 0; border-color: var(--accent-gold); color: var(--accent-gold);" onclick="document.getElementById('input-importar-json').click()">📤 Carregar .JSON</button>
@@ -3153,20 +3157,37 @@ function rolarAtaqueEDano() {
                 container.innerHTML = '<p style="color:#737380; font-size:0.8rem; text-align:center; grid-column: 1 / -1; padding: 20px;">Nenhuma pista foi revelada ainda.</p>';
                 return;
             }
-            pistasReveladas.forEach(pista => {
+            pistasReveladas.forEach((pista, index) => {
                 const div = document.createElement('div');
                 div.className = 'token-item'; 
                 div.style.gridColumn = 'span 1';
-                div.onclick = () => {
-                    mostrarHandoutLocal(pista.url, pista.titulo);
-                    togglePlayerHandoutPanel(); // Fecha o menu pra ler o documento
-                };
+                div.style.position = 'relative'; // Necessário para a lixeira ficar no canto
+                
                 div.innerHTML = `
-                    <div class="handout-preview" style="background-image: url('${pista.url}'); background-color: rgba(0,0,0,0.4);"></div>
-                    <span style="margin-top: 5px; font-size: 0.75rem; color: #ededf0; text-align: center;">${pista.titulo}</span>
+                    <button class="btn-delete-pista" onclick="apagarPistaIndividual(${index}, event)" title="Apagar Pista">🗑️</button>
+                    <div class="handout-preview" style="background-image: url('${pista.url}'); background-color: rgba(0,0,0,0.4);" onclick="mostrarHandoutLocal('${pista.url}', '${pista.titulo}'); togglePlayerHandoutPanel();"></div>
+                    <span style="margin-top: 5px; font-size: 0.75rem; color: #ededf0; text-align: center; cursor: pointer;" onclick="mostrarHandoutLocal('${pista.url}', '${pista.titulo}'); togglePlayerHandoutPanel();">${pista.titulo}</span>
                 `;
                 container.appendChild(div);
             });
+        }
+        function apagarPistaIndividual(index, event) {
+            event.stopPropagation(); // Impede que o clique na lixeira abra a imagem por acidente
+            
+            const msg = isJogador ? "Deseja apagar esta pista do seu Diário local?" : "Deseja apagar esta pista do Diário de TODOS os jogadores?";
+            if (confirm(msg)) {
+                // Remove o item da mochila
+                pistasReveladas.splice(index, 1);
+                renderizarGaleriaJogador(); // Recarrega a sua lista
+                
+                // Se for o Mestre, ele salva a alteração e obriga todos os jogadores a atualizarem os seus diários
+                if (!isJogador) {
+                    salvarSessao();
+                    if (typeof canalSync !== 'undefined') {
+                        canalSync.postMessage({ tipo: 'sync-pistas', pistas: pistasReveladas });
+                    }
+                }
+            }
         }
 
         function fecharHandoutLocal() {
